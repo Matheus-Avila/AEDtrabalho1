@@ -147,27 +147,20 @@ double no::ganhoAtributos()
 }
 
 std::string no::buscaFilho(amostra sample){
-    std::cout << "Buscanco no nobusca " << this->getAtributoDivisao() << std::endl;
-    std::cout << "Classe no this " << this->getClasse() << "/ num sim: " << this->get_num_sim() << " " << this->getAmostras()->size()  << std::endl;
-    cout << "Num filhos: " << this->getFilhos().size() << endl;
     if (this->get_num_sim() == this->getAmostras()->size() || this->get_num_sim() == this->getAmostras()->size()){
         this->setClasse();
-        cout << "Sou folha! " << this->getAtributoDivisao() << " --- " << this->getClasse() << endl;
         return this->getClasse();}
     std::vector<no>::iterator itr;
     std::vector<no*> filhos = this->getFilhos();
     for (int y = 0; y < filhos.size(); ++y){   
         no* filho = filhos[y];
         for(int z = 0; z < 4; ++z){ 
-        cout << "sample: " << sample.atributos[z] << "// filho:" << filho->getAtributoDivisao() << endl;
             if (sample.atributos[z] == filho->getAtributoDivisao())
             {   
-                cout << "Encontrei um filho compativel! " << filho->getAtributoDivisao() << " --- " << filho->getClasse() << endl;
                 return filho->buscaFilho(sample);
             }
         }
     }
-    cout << "Não tenho filho correspondente! " << this->getAtributoDivisao() << " --- " << this->getClasse() << endl;
     this->setClasse();
     return this->getClasse();
 }

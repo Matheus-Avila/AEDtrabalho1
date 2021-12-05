@@ -91,32 +91,6 @@ arvore::~arvore()
     // TODO Deletar os filhos e a raiz
 }
 
-// string arvore::buscaFilho(no *noBusca, amostra sample)
-// {
-//     std::cout << "Buscanco no nobusca " << noBusca->getAtributoDivisao() << std::endl;
-//     std::cout << "Classe no nobusca " << noBusca->getClasse() << "/ num sim: " << noBusca->get_num_sim() << " " << noBusca->getAmostras()->size()  << std::endl;
-//     if (noBusca->get_num_sim() == noBusca->getAmostras()->size() || noBusca->get_num_sim() == noBusca->getAmostras()->size()){
-//         noBusca->setClasse();
-//         cout << "entrei! " << noBusca->getAtributoDivisao() << " --- " << noBusca->getClasse() << endl;
-//         return noBusca->getClasse();}
-//     std::vector<no>::iterator itr;
-//     std::vector<no> *filhos = noBusca->getFilhos();
-
-//     for (int y = 0; y < filhos->size(); ++y)
-//     {   for(int z = 0; z < 4; ++z){ 
-//             if (sample.atributos[z] == (*filhos)[y].getAtributoDivisao())
-//             {   
-//                 return buscaFilho(&(*filhos)[y], sample);
-//             }
-//         }
-//     }
-
-
-//     return noBusca->getClasse();
-// }
-
-
-
 double arvore::avaliadorDePrecisao()
 {
     std::fstream f_leitura;
@@ -160,7 +134,6 @@ double arvore::avaliadorDePrecisao()
     double precisaoDaClassificacao = 0;
     for (int i = 0; i < 3; i++)
     { // compare a classe encontrada pela arvore com a classe já previamente lida
-        std::cout << resultadosArvore[i] << ", " << samples[i].classe << std::endl;
         if (resultadosArvore[i] == samples[i].classe)
             precisaoDaClassificacao++;
     }
@@ -169,9 +142,21 @@ double arvore::avaliadorDePrecisao()
     return precisaoDaClassificacao;
 }
 
-// string arvore::situacaoEspecifica(){
+string arvore::situacaoEspecifica(){
 
-// }
+    amostra sample;
+    cout << "Digite o tempo:" << endl;
+    cin >> sample.atributos[0];
+    cout << "Digite a temperatura:" << endl;
+    cin >> sample.atributos[1];
+    cout << "Digite a umidade:" << endl;
+    cin >> sample.atributos[2];
+    cout << "Digite a força do vento:" << endl;
+    cin >> sample.atributos[3];
+    sample.classe = "0";
+    cout << "A resposta da arvore de classificacao é " << raiz->buscaFilho(sample);
+    return "Fim da execução";
+}
 
 void arvore::init(no *n)
 {
