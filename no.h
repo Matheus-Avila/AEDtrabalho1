@@ -5,6 +5,8 @@
 #include <math.h>
 #include <set>
 
+using namespace std;
+
 typedef struct atributo
 {
     std::string tipo;
@@ -23,13 +25,13 @@ class no
 {
 private:
     std::vector<amostra> amostras;
-    std::vector<no> filhos;
     std::string classe;
     std::string atributoDivisao;
     int num_amostras_sim;
     int num_amostras_nao;
 
 public:
+    std::vector<no*> filhos;
     atributo *atributos;
     double entropiaNo();             //pega o numero de amostras de cada classe e define a entropia
     double ganhoAtributos(); // Para cada atributo a partir de atrib em atributos calcule seu ganho
@@ -41,13 +43,14 @@ public:
     void verificaClasse();
     std::vector<amostra> *getAmostras();
     void setAmostra(amostra sample);
-    std::vector<no> *getFilhos();
-    void setFilho(no filho);
+    std::vector<no*> getFilhos();
+    void setFilho(no* filho);
     int get_num_sim();
     int get_num_nao();
     std::string getAtributoDivisao();
     void aumenta_num_sim();
     void aumenta_num_nao();
+    std::string buscaFilho(amostra sample);
 };
 
 no::no(){
@@ -143,6 +146,32 @@ double no::ganhoAtributos()
     return encontraIndiceMaiorElemento(ganhosDosAtributos);
 }
 
+std::string no::buscaFilho(amostra sample){
+    std::cout << "Buscanco no nobusca " << this->getAtributoDivisao() << std::endl;
+    std::cout << "Classe no this " << this->getClasse() << "/ num sim: " << this->get_num_sim() << " " << this->getAmostras()->size()  << std::endl;
+    cout << "Num filhos: " << this->getFilhos().size() << endl;
+    if (this->get_num_sim() == this->getAmostras()->size() || this->get_num_sim() == this->getAmostras()->size()){
+        this->setClasse();
+        cout << "Sou folha! " << this->getAtributoDivisao() << " --- " << this->getClasse() << endl;
+        return this->getClasse();}
+    std::vector<no>::iterator itr;
+    std::vector<no*> filhos = this->getFilhos();
+    for (int y = 0; y < filhos.size(); ++y){   
+        no* filho = filhos[y];
+        for(int z = 0; z < 4; ++z){ 
+        cout << "sample: " << sample.atributos[z] << "// filho:" << filho->getAtributoDivisao() << endl;
+            if (sample.atributos[z] == filho->getAtributoDivisao())
+            {   
+                cout << "Encontrei um filho compativel! " << filho->getAtributoDivisao() << " --- " << filho->getClasse() << endl;
+                return filho->buscaFilho(sample);
+            }
+        }
+    }
+    cout << "Não tenho filho correspondente! " << this->getAtributoDivisao() << " --- " << this->getClasse() << endl;
+    this->setClasse();
+    return this->getClasse();
+}
+
 no::~no()
 {
 }
@@ -161,14 +190,14 @@ std::vector<amostra> *no::getAmostras()
     return &this->amostras;
 }
 
-void no::setFilho(no filho)
+void no::setFilho(no* filho)
 {
-    filhos.push_back(filho);
+    this->filhos.push_back(filho);
 }
 
-std::vector<no> *no::getFilhos()
+std::vector<no*> no::getFilhos()
 {
-    return &this->filhos;
+    return this->filhos;
 }
 
 int no::get_num_nao()
