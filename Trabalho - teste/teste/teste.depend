@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1637532422 source:c:\users\tatiana danelon\desktop\disciplinas doutorado\2021.3\algoritmo e estrutura de dados\trabalho - teste\teste\main.c
+	<stdio.h>
+	<string.h>
+	<math.h>
+	<stdlib.h>
+
