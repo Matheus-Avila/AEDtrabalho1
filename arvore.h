@@ -19,6 +19,8 @@ public:
     ~arvore();
     void init(no *n);
     void selecionaAtributo();
+    double avaliadorDePrecisao();
+    string situacaoEspecifica();
 };
 
 arvore::arvore()
@@ -28,7 +30,6 @@ arvore::arvore()
     this->raiz->atributos = new atributo[4];
     std::fstream f_leitura;
     f_leitura.open("entrada");
-    int tam_f_leitura;
     std::string str_read;
     getline(f_leitura, str_read, ',');
     aux.tipo = str_read;
@@ -79,19 +80,97 @@ arvore::arvore()
     f_leitura.close();
     //Amostras incluidas na raiz.
     //Possiveis valores de cada atributo já estao definidos
-    //TODO Ordenar atributos de acordo com atributo entropia(ou ganho). Nao sei fazer isso
     //Treinando a arvore de classificação
     init(raiz);
 }
 
 arvore::~arvore()
 {
-    //Deletar os filhos e a raiz
+    //TODO Deletar os filhos e a raiz
 }
+
+double arvore::avaliadorDePrecisao(){
+    std::fstream f_leitura;
+    f_leitura.open("classificar");
+    std::string str_read;
+    amostra samples [3];
+    amostra sample;
+    int i = 0;
+    while (!f_leitura.eof()){
+        getline(f_leitura, str_read, ',');
+        sample.atributos[0] = str_read;
+
+        getline(f_leitura, str_read, ',');
+        sample.atributos[1] = str_read;
+
+        getline(f_leitura, str_read, ',');
+        sample.atributos[2] = str_read;
+
+        getline(f_leitura, str_read, ',');
+        sample.atributos[3] = str_read;
+
+        getline(f_leitura, str_read, '\n');
+        sample.classe = str_read;
+        samples[i] = sample;
+        i++;
+    }
+
+    f_leitura.close();
+    
+    no noBusca;
+    string resultadosArvore [3];
+    //Para cada amostra lida    
+    for(int i = 0; i < 3; i++){
+        noBusca  = *this->raiz;
+        std::vector<no> *filhos = noBusca.getFilhos();
+        for (int z = 0; z < filhos->size(); ++z){
+            no filho = (*filhos)[z];
+            std::cout << "Classe: " << noBusca.getClasse() << std::endl;
+            if(noBusca.getClasse() == "NÃO"){
+                resultadosArvore[i] = "NÃO";
+                std::cout << i << " Nao" << std::endl;
+                break;
+            }
+            if(noBusca.getClasse() == "SIM"){
+                resultadosArvore[i] = "SIM";
+                std::cout << i << " Sim" << std::endl;
+                break;
+            }
+            for(int j = 0; j < 4; j++){
+                //Para cada filho de n busque qual tem o atributoDivisao igual ao da amostra
+                std::cout << filho.getAtributoDivisao() << "///" << samples[i].atributos[j] << std::endl;
+                if(filho.getAtributoDivisao() == samples[i].atributos[j]){
+                    std::cout << filho.getAtributoDivisao() << std::endl;
+                    noBusca = (*filhos)[z];
+                    break;
+                }
+            }
+            
+        }
+        //Se nenhum filho atender ao critério de busca pegue o mais frequente no nó atual e retorne a classe
+        std::cout << "Alcancei!!!!" << std::endl;
+        if(noBusca.get_num_sim() >= noBusca.get_num_nao()) resultadosArvore[i] = "SIM";
+            else resultadosArvore[i] = "NÃO";
+    }
+
+    double precisaoDaClassificacao = 0;
+
+    for(int i = 0; i < 3; i++){//compare a classe encontrada pela arvore com a classe já previamente lida
+        std::cout << resultadosArvore[i] << ", " << samples[i].classe << std::endl;
+        if(resultadosArvore[i] == samples[i].classe) precisaoDaClassificacao++;
+    }   
+    precisaoDaClassificacao = precisaoDaClassificacao/3;
+
+    return precisaoDaClassificacao;
+}
+
+// string arvore::situacaoEspecifica(){
+
+// }
 
 void arvore::init(no *n){
     if (n->getClasse() == "SIM" || n->getClasse() == "NÃO"){
-        std::cout << "Meu tipo: " << n->getAtributoDivisao()  << " Minha classe: " << n->getClasse() << std::endl; 
+        
     }
     else{
     std::cout << "MEu tipo: " << n->getAtributoDivisao() << std::endl;
@@ -130,7 +209,7 @@ void arvore::init(no *n){
             amostras->clear();
             for (int z = 0; z < filhos->size(); ++z){
                 no filho = (*filhos)[z];
-                if (filho.getAmostras()->size() != 0){ //TODO verificar se esse if faz sentido!!!!!!!!
+                if (filho.getAmostras()->size() != 0){
                     if (filho.get_num_sim() == filho.getAmostras()->size()){
                         filho.setClasse();
                         std::cout << "Sou :" << filho.getAtributoDivisao() << " e minha classe eh: " << filho.getClasse() << std::endl;
